@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>SignUp Page</title>
+  
+  </head>
+  <body>
+    <h1>SignUp</h1>
+    <p>Welcome to the SignUp Page for our Smart Weather Station Web App</p>
+    
+	{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+	
+	<form action="" method="post" >
+	  {% csrf_token %}
+      <fieldset>
+        <label for="username">Enter Your Username: <input id="username" name="username" type="text" placeholder="Username" required /></label>
+        <label for="email">Enter Your Email: <input id="email" name="email" type="email" placeholder="Email" required /></label>
+        <label for="pass1">Create a New Password:
+		</br>
+		<h5><i>(Must be at least 8 characters with uppercase, lowercase, a number and a special character)</i></h5> 
+		<input id="pass1" name="pass1" type="password" pattern="[A-Za-z0-9@$!%*?&#^()-_+=]{8,}" placeholder="Password" required /></label>
+		
+		<label for="pass2">Confirm Password:
+		<input id="pass2" name="pass2" type="password" pattern="[A-Za-z0-9@$!%*?&#^()-_+=]{8,}" placeholder="Confirm Password" required /></label>
+		<input type="checkbox" class="signup_inline" onclick="show_pass()"/>Show Password 
+		  <br>
+		  <br>
+		  <br>
+      </fieldset>
+      <fieldset>
+        <label for="terms-and-conditions">
+          <input id="terms-and-conditions" type="checkbox" required name="terms-and-conditions" class="signup_inline" /> I accept the <a href="{% url 'terms' %}">terms and conditions</a>
+        </label>
+      </fieldset>
+      <input type="submit" value="Submit" />
+	   
+         <a  href="{% url 'signin' %}"">I already have an account</a>
+    </form>
+
+	<script>
+	
+		function show_pass(){
+            var pass1 = document.getElementById("pass1");
+            var pass2 = document.getElementById("pass2");
+            if(pass1.type === "password"){
+                pass1.type = "text";
+                pass2.type = "text";
+            } else {
+                pass1.type = "password";
+                pass2.type = "password";
+            }
+        }
+
+
+	</script>
+  </body>
+</html>

@@ -1,0 +1,2 @@
+windowsVenv/
+*.db.sqlite3

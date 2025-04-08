@@ -1,0 +1,99 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Teachers&display=swap');
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 50px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    height: 120px;
+    width: auto;
+}
+
+.navbar {
+    display: flex;
+    gap: 20px;
+    padding-right: 15rem;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.navbar a:hover {
+    color: white;
+    background-color: #0cda50;
+    border-radius: 5px;
+}
+
+
+.teachers-navigation-font{
+  font-family: "Teachers", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  letter-spacing: 1px;
+  font-size: 18px;
+
+}
+
+.glass{
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255, 255,255,0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(100px);
+    border-radius: 10px;
+}
+
+
+/* Menu Icon */
+.menu-icon {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+    padding-right: 50px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 20px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding-right: 0;
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    .navbar.open {
+        max-height: 200px; /* Adjust based on the number of links */
+    }
+
+    .logo {
+        height: 80px;
+    }
+
+    .menu-icon {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar a {
+        font-size: 16px;
+        padding: 5px 0;
+    }
+}

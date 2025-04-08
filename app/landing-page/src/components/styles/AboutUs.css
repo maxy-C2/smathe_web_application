@@ -1,0 +1,70 @@
+.about-us-container {
+  height: 90vh;
+  background-color: #0cda50;
+}
+
+.about-us {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+}
+
+.about-us-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+  gap: 20px;
+}
+
+.about-us-text {
+  flex: 1;
+  color: black;
+}
+
+.h1-text {
+  font-size: 52px;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  word-break: break-word; /* Ensures proper line breaks */
+}
+
+.about-us-text p {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.p-text {
+  color: white;
+  font-size: 30px;
+  line-height: 1.6;
+  margin-left: 30px; /* Adjust this value to offset p-text */
+}
+
+.about-us-image {
+  flex: 1;
+  margin-left: 20px; /* Same value as margin-left of p-text for consistency */
+}
+
+.about-us-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .about-us-content {
+      flex-direction: column;
+  }
+
+  .h1-text {
+      font-size: 28px;
+  }
+
+  .about-us-text p {
+      font-size: 16px;
+  }
+}

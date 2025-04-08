@@ -1,0 +1,514 @@
+{% load static %}
+
+{% block head %}
+<!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<!-- Include Bootstrap JavaScript (Popper.js and Bootstrap JS) -->
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Ensure you have included jQuery and Chart.js -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: -apple-system, system-ui, BlinkMacSystemFont;
+}
+    /* Style for the filter buttons */
+    .filter-button {
+        background-color: #ddd;
+        border: none;
+        color: #333;
+        border-radius: 20px;
+        padding: 5px 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .filter-button.active {
+        background-color: #119f31;
+        color: #fff;
+    }
+    .chart-canvas {
+    width: 500px; 
+    height: 500px; 
+    }
+     .section-nav {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .section-nav button {
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .section-nav button:focus {
+        outline: none;
+    }
+/* Style for the navigation buttons and containers */
+.nav-container {
+    background-color: #119f31;
+    border-radius: 50%;
+    padding: 10px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.nav-container:hover {
+    background-color: #0d7e26;
+}
+
+.nav-arrow {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 5px;
+    margin: 0;
+    line-height: 1;
+}
+
+/* Center the navigation buttons vertically within the container */
+.nav-container {
+    display: flex;
+    align-items: center;
+}
+/* Style for the banner */
+.banner {
+        width: 100%;
+        height: 50px; /* Set the height to the desired value */
+        overflow: hidden;
+        position: relative; /* Add relative positioning */
+    }
+
+    .banner img {
+        width: 100%;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1; /* Move the image behind the content */
+    }
+
+        /* Add padding above the footer */
+        .section-before-footer {
+        padding-bottom: 20px; /* Adjust as needed */
+    }
+
+    /* Style the footer */
+    footer {
+        background-color: #9bb38f;
+        color: #fff;
+        padding: 60px 0;
+    }
+
+    /* Style the footer headings */
+    footer h5 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    /* Style the footer address */
+    footer address {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    /* Style the footer links */
+    footer ul.list-unstyled li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    /* Style the social media icons */
+    footer ul.list-inline li a i {
+        font-size: 24px;
+        color: #fff;
+    }
+
+    .bottom {
+    margin-bottom: 3.5rem!important;
+}
+
+</style>
+{% endblock head %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #119f31;">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'logo.png' %}" alt="BlitzAgroTech Logo" height="40">
+            <span style="color: #f0efed;">BlitzAgroTech Weather Station</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Signin</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Banner -->
+    <div class="banner">
+        <img src="{% static 'banner-image.jpg' %}" alt="Banner Image" class="img-fluid">
+    </div>
+
+
+<!-- Chart rendering code -->
+
+
+<!-- Filter buttons -->
+<div class="container mt-4 bottom">
+    <div class="text-center">
+        <button class="filter-button active" data-target="environment">Environment Data</button>
+        <button class="filter-button" data-target="wind">Wind Information</button>
+        <button class="filter-button" data-target="soil">Soil Data</button>
+        <button class="filter-button" data-target="sun">Sun Data</button>
+        <button class="filter-button" data-target="natural">Natural Weather Data</button>
+    </div>
+
+    <!-- Add navigation arrows -->
+    <div class="section-nav">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Previous Button Container -->
+            <div class="nav-container">
+                <button class="nav-arrow" id="prev-section">&lt;</button>
+            </div>
+            <div class="content-section" id="environment">
+                <h3 class="mt-4">Environment Data</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas class="chart-canvas" id="myCharthumidity" data-url="{% url 'bar-graph' %}"  style="display: block;"></canvas>
+    
+                    </div>
+                    <div class="col-md-6">
+                        <canvas class="chart-canvas" id="myCharttemp" data-url="{% url 'bar-graph' %}"  style="display: block;"></canvas>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="content-section" id="wind" style="display: none;">
+                <h3 class="mt-4">Wind Information</h3>
+                <div class="row justify-content-center" >
+                    <div class="col-md-12">
+                        <canvas class="chart-canvas" id="myChartwindDirecSpeed" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="content-section" id="soil" style="display: none;">
+                <h3 class="mt-4">Soil Data</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <canvas class="chart-canvas" id="myChartrainfall" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas class="chart-canvas" id="myChartsoilmoisture" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas class="chart-canvas" id="myChartsoiltemp" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="content-section" id="sun" style="display: none;">
+                <h3 class="mt-4">Sun Data</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas class="chart-canvas" id="myChartlightintensity" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas class="chart-canvas" id="myChartsolarradiance" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="content-section" id="natural" style="display: none;">
+                <h3 class="mt-4">Natural Weather Data</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas class="chart-canvas" id="myChartbarometricpa" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas class="chart-canvas" id="myChartbmealtitude" data-url="{% url 'bar-graph' %}" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Next Button Container -->
+        <div class="nav-container">
+            <button class="nav-arrow" id="next-section">&gt;</button>
+        </div>
+    </div>
+</div>
+
+    
+</div>
+
+<!-- Modern Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Contact Us</h5>
+                <address>
+                    18 Sable Street<br>
+                    Mandara, Harare<br>
+                    Email: support@blitzagrotech.com<br>
+                    Phone: +263 77 461 3020
+                </address>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <ul class="list-unstyled list-inline">
+                    <li class="list-inline-item"><a href="#"><i class="fab fa-facebook fa-lg"></i></a></li>
+                    <li class="list-inline-item"><a href="#"><i class="fab fa-twitter fa-lg"></i></a></li>
+                    <li class="list-inline-item"><a href="#"><i class="fab fa-linkedin fa-lg"></i></a></li>
+                    <li class="list-inline-item"><a href="#"><i class="fab fa-instagram fa-lg"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+{% endblock content %}
+
+<script>
+    $(document).ready(function () {
+        // Initialize section index
+        var currentSection = 0;
+
+        // Function to show/hide content based on the selected filter
+        function showContent(target) {
+            $('.content-section').hide();
+            $('#' + target).show();
+        }
+
+        // Function to navigate to the next section
+        function nextSection() {
+            if (currentSection < 4) {
+                currentSection++;
+                updateNavigation();
+                var target = $('.content-section').eq(currentSection).attr('id');
+                $('.filter-button[data-target="' + target + '"]').click(); // Trigger click event
+                updateFilterButton();
+            }
+        }
+
+        // Function to navigate to the previous section
+        function prevSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                updateNavigation();
+                var target = $('.content-section').eq(currentSection).attr('id');
+                $('.filter-button[data-target="' + target + '"]').click(); // Trigger click event
+                updateFilterButton();
+            }
+        }
+
+
+
+        // Update navigation arrows
+        function updateNavigation() {
+            if (currentSection === 0) {
+                $('#prev-section').prop('disabled', true);
+            } else {
+                $('#prev-section').prop('disabled', false);
+            }
+
+            if (currentSection === 4) {
+                $('#next-section').prop('disabled', true);
+            } else {
+                $('#next-section').prop('disabled', false);
+            }
+        }
+
+        // Update filter button
+        function updateFilterButton() {
+            var target = $('.content-section').eq(currentSection).attr('id');
+            $('.filter-button').removeClass('active');
+            $('.filter-button[data-target="' + target + '"]').addClass('active');
+        }
+
+        // Initial content to show
+        showContent('environment');
+
+        // Filter button click event
+        $('.filter-button').click(function () {
+            $('.filter-button').removeClass('active');
+            $(this).addClass('active');
+            var target = $(this).data('target');
+            showContent(target);
+
+            // Update current section index
+            currentSection = $('.content-section').index($('#' + target));
+            updateNavigation();
+        });
+
+        
+        
+
+
+        // Navigation arrow click events
+        $('#next-section').click(nextSection);
+        $('#prev-section').click(prevSection);
+
+        // Function to create a line chart
+        function createLineChart(ctx, label, data, yAxisLabel, backgroundColor, borderColor) {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderColor: borderColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false, // Set maintainAspectRatio to false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: yAxisLabel
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create a radar chart
+        function createRadarChart(ctx, data, labels) {
+            return new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: ['WindSpeed (Knots)', 'Wind Direction (unit)'],
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false, // Set maintainAspectRatio to false
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Your data variables and chart creation code
+        var humidity = {{ humidity|safe }};
+        var temperature = {{ temperature|safe }};
+        var windDirection = {{ windDirection|safe }};
+        var windSpeed = {{ windSpeed|safe }};
+        var rainfall = {{ rainfall|safe }};
+        var soilmoisture = {{ soilmoisture|safe }};
+        var soiltemperature = {{ soiltemperature|safe }};
+        var lightintensity = {{ lightintensity|safe }};
+        var solarradiance = {{ solarradiance|safe }};
+        var barometricpressure = {{ barometricpressure|safe }};
+        var bmealtitude = {{ bmealtitude|safe }};
+        var locationLat = {{ locationLat|safe }};
+        var locationLong = {{ locationLong|safe }};
+        var labels = {{ labels|safe }};
+
+        // AJAX request to fetch data and create charts
+        var $myChart = $("#myChart");
+        var endpoint = $myChart.data("url");
+
+        $.ajax({
+            method: "GET",
+            url: endpoint,
+            success: function () {
+                // Create charts based on the initial filter selection
+                createLineChart(document.getElementById('myCharthumidity'), 'Humidity (%)', humidity, 'Humidity', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)');
+                createLineChart(document.getElementById('myCharttemp'), 'Temperature (C)', temperature, 'Temperature', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)');
+
+                // Update charts when a filter button is clicked
+                $('.filter-button').click(function () {
+                    var target = $(this).data('target');
+                    // Replace the data and labels based on your filtering logic
+                    // For example, if you have different datasets for each filter option, switch them here
+                    switch (target) {
+                        case 'environment':
+                            createLineChart(document.getElementById('myCharthumidity'), 'Humidity (%)', humidity, 'Humidity', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)');
+                            createLineChart(document.getElementById('myCharttemp'), 'Temperature (C)', temperature, 'Temperature', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)');
+                            break;
+                        case 'wind':
+                            createRadarChart(document.getElementById('myChartwindDirecSpeed'), windDirection, ['NORTH', 'NORTH EAST', 'EAST', 'SOUTH EAST', 'SOUTH', 'SOUTH WEST', 'WEST', 'NORTH WEST']);
+                            break;
+                        case 'soil':
+                            createLineChart(document.getElementById('myChartrainfall'), 'Rainfall (mm)', rainfall, 'Rainfall', 'rgba(153, 102, 255, 0.2)', 'rgba(153, 102, 255, 1)');
+                            createLineChart(document.getElementById('myChartsoilmoisture'), 'Soil Moisture (%)', soilmoisture, 'Soil Moisture', 'rgba(255, 159, 64, 0.2)', 'rgba(255, 159, 64, 1)');
+                            createLineChart(document.getElementById('myChartsoiltemp'), 'Soil Temperature (%)', soiltemperature, 'Soil Temperature', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)');
+                            break;
+                        case 'sun':
+                            createLineChart(document.getElementById('myChartlightintensity'), 'Light Intensity (%)', lightintensity, 'Light Intensity', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)');
+                            createLineChart(document.getElementById('myChartsolarradiance'), 'Solar Radiance (%)', solarradiance, 'Solar Radiance', 'rgba(255, 206, 86, 0.2)', 'rgba(255, 206, 86, 1)');
+                            break;
+                        case 'natural':
+                            createLineChart(document.getElementById('myChartbarometricpa'), 'Barometric Pressure (%)', barometricpressure, 'Barometric Pressure', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
+                            createLineChart(document.getElementById('myChartbmealtitude'), 'Altitude (%)', bmealtitude, 'Altitude', 'rgba(153, 102, 255, 0.2)', 'rgba(153, 102, 255, 1)');
+                            break;
+                    }
+                });
+            },
+            error: function () {
+                console.log("error");
+            }
+        });
+    });
+</script>
