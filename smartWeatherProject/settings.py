@@ -46,9 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #custom apps
-    'users',
+    'userLogs',
     'dashboard',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -97,8 +96,8 @@ else:
             'default': {
                 'ENGINE': 'django.db.backends.postgresql_psycopg2',
                 'NAME': 'weatherdata',
-                'USER': 'poso',
-                'PASSWORD': 'test1234',
+                'USER': 'maxy', #poso
+                'PASSWORD': 'admin1234', #test1234
                 'HOST': 'localhost',
                 'PORT': '',
                 }
@@ -145,9 +144,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'dashboard', 'static'),
+    os.path.join(BASE_DIR, 'userLogs', 'static'),
+]
+
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+MEDIAFILES_DIRS = [
+    os.path.join(BASE_DIR, 'dashboard', 'media'),
+    os.path.join(BASE_DIR, 'userLogs', 'media'),
+]
+
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BlitzAgroTech</title>
+    <link rel="stylesheet" href="{% static 'css/admin_styles.css' %}">
+</head>
+<body>
+    <div class="admin-container">
+        <header>
+            <h1>Admin Dashboard</h1>
+            <p>Welcome, {{ admin.username }}!</p>
+            <div class="actions">
+                <a href="{% url 'admin_logout' %}" class="btn">Logout</a>
+            </div>
+        </header>
+
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="{% url 'manage_users' %}">Manage Users</a></li>
+                <li><a href="{% url 'manage_weather_stations' %}">Weather Stations</a></li>
+                <li><a href="{% url 'system_logs' %}">System Logs</a></li>
+                <li><a href="{% url 'admin_settings' %}">Settings</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-content">
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p class="stat-number">{{ user_count }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Weather Stations</h3>
+                    <p class="stat-number">{{ station_count }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>New Registrations (7 days)</h3>
+                    <p class="stat-number">{{ new_users }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>System Status</h3>
+                    <p class="stat-status">{{ system_status }}</p>
+                </div>
+            </div>
+
+            <section class="recent-activities">
+                <h2>Recent Activities</h2>
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th>Admin</th>
+                            <th>Activity</th>
+                            <th>Description</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in recent_activities %}
+                        <tr>
+                            <td>{{ activity.admin.username }}</td>
+                            <td>{{ activity.activity_type }}</td>
+                            <td>{{ activity.description }}</td>
+                            <td>{{ activity.timestamp|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No recent activities</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
