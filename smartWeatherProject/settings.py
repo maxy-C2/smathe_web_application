@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     #custom apps
     'userLogs',
     'dashboard',
+    'adminLogs',
 ]
 
 MIDDLEWARE = [
@@ -58,9 +59,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'adminLogs.middleware.AdminActivityMiddleware',
 ]
 
-ROOT_URLCONF = 'smartweatherproject.urls'
+ROOT_URLCONF = 'smartWeatherProject.urls'
 
 TEMPLATES = [
     {
@@ -73,12 +75,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'adminLogs.models.admin_stats_context',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'smartweatherproject.wsgi.application'
+WSGI_APPLICATION = 'smartWeatherProject.wsgi.application'
+
+# Update admin settings
+ADMIN_URL = 'admin/'  # Customize your admin URL if desired
 
 
 # Database

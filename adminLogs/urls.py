@@ -1,6 +1,16 @@
 from django.urls import path
 from . import views
 
+
+# Modifiying adminLogs/urls.py to focus on activity logging:
+
+urlpatterns = [
+    # Keep only API endpoints for logging if needed
+    path('api/log-activity/', views.log_admin_activity, name='log_admin_activity'),
+    
+]
+
+
 urlpatterns = [
     path('login/', views.admin_login, name='admin_login'),
     path('logout/', views.admin_logout, name='admin_logout'),
