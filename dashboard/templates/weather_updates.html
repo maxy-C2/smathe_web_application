@@ -1,18 +1,11 @@
+{% extends 'base.html' %}
 {% load static %}
 
-{% block head %}
-<!-- Loading main css file -->
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
-		
+{% block title %}Weather Updates - BlitzAgroTech{% endblock %}
+
+{% block extra_css %}
 <!-- Include Bootstrap CSS -->
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-
-<!-- Include Bootstrap JavaScript (Popper.js and Bootstrap JS) -->
-<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-<!-- Ensure you have included jQuery and Chart.js -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
     body {
@@ -101,84 +94,19 @@
         z-index: -1; /* Move the image behind the content */
     }
 
-    /* Add padding above the footer */
-    .section-before-footer {
-        padding-bottom: 20px; /* Adjust as needed */
-    }
-
-    /* Style the footer */
-    footer {
-        background-color: #9bb38f;
-        color: #fff;
-        padding: 60px 0;
-    }
-
-    /* Style the footer headings */
-    footer h5 {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-
-    /* Style the footer address */
-    footer address {
-        font-size: 18px;
-        line-height: 1.5;
-    }
-
-    /* Style the footer links */
-    footer ul.list-unstyled li a {
-        color: #fff;
-        text-decoration: none;
-        font-size: 16px;
-    }
-
-    /* Style the social media icons */
-    footer ul.list-inline li a i {
-        font-size: 24px;
-        color: #fff;
-    }
-
     .bottom {
         margin-bottom: 3.5rem!important;
     }
 </style>
-{% endblock head %}
+{% endblock %}
 
 {% block content %}
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #119f31;">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <img src="{% static 'first_logo.png' %}" alt="BlitzAgroTech Logo" height="40">
-            <span style="color: #f0efed;">BlitzAgroTech Weather Station</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Signin</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
 <!-- Banner -->
 <div class="banner">
     <img src="{% static 'banner.jpeg' %}" alt="Banner Image" class="img-fluid">
 </div>
 
 <!-- Chart rendering code -->
-
 <!-- Filter buttons -->
 <div class="container mt-4 bottom">
     <div class="text-center">
@@ -201,7 +129,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <canvas class="chart-canvas" id="myCharthumidity" data-url="{% url 'bar-graph' %}"  style="display: block;"></canvas>
-    
                     </div>
                     <div class="col-md-6">
                         <canvas class="chart-canvas" id="myCharttemp" data-url="{% url 'bar-graph' %}"  style="display: block;"></canvas>
@@ -264,43 +191,16 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
-<!-- Modern Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <h5>Contact Us</h5>
-                <address>
-                    18 Sable Street<br>
-                    Mandara, Harare<br>
-                    Email: support@blitzagrotech.com<br>
-                    Phone: +263 77 461 3020
-                </address>
-            </div>
-            <div class="col-md-4">
-                <h5>Quick Links</h5>
-                <ul class="list-unstyled">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-            <div class="col-md-4">
-                <h5>Follow Us</h5>
-                <ul class="list-unstyled list-inline">
-                    <li class="list-inline-item"><a href="#"><i class="fab fa-facebook fa-lg"></i></a></li>
-                    <li class="list-inline-item"><a href="#"><i class="fab fa-twitter fa-lg"></i></a></li>
-                    <li class="list-inline-item"><a href="#"><i class="fab fa-linkedin fa-lg"></i></a></li>
-                    <li class="list-inline-item"><a href="#"><i class="fab fa-instagram fa-lg"></i></a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
+{% block scripts %}
+{{ block.super }}
+<!-- Include Bootstrap JavaScript (Popper.js and Bootstrap JS) -->
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
-{% endblock content %}
+<!-- Ensure you have included jQuery and Chart.js -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -376,8 +276,49 @@
         $('#next-section').click(nextSection);
         $('#prev-section').click(prevSection);
 
+        // Get data variables from template context
+        try {
+            // Use JSON.stringify to ensure proper JavaScript syntax
+            var humidity = JSON.parse('{{ humidity|safe|default:"[]" }}');
+            var temperature = JSON.parse('{{ temperature|safe|default:"[]" }}');
+            var windDirection = JSON.parse('{{ windDirection|safe|default:"[]" }}');
+            var windSpeed = JSON.parse('{{ windSpeed|safe|default:"[]" }}');
+            var rainfall = JSON.parse('{{ rainfall|safe|default:"[]" }}');
+            var soilmoisture = JSON.parse('{{ soilmoisture|safe|default:"[]" }}');
+            var soiltemperature = JSON.parse('{{ soiltemperature|safe|default:"[]" }}');
+            var lightintensity = JSON.parse('{{ lightintensity|safe|default:"[]" }}');
+            var solarradiance = JSON.parse('{{ solarradiance|safe|default:"[]" }}');
+            var barometricpressure = JSON.parse('{{ barometricpressure|safe|default:"[]" }}');
+            var bmealtitude = JSON.parse('{{ bmealtitude|safe|default:"[]" }}');
+            var locationLat = JSON.parse('{{ locationLat|safe|default:"[]" }}');
+            var locationLong = JSON.parse('{{ locationLong|safe|default:"[]" }}');
+            var labels = JSON.parse('{{ labels|safe|default:"[]" }}');
+        } catch (e) {
+            console.error("Error parsing data:", e);
+            // Set default empty arrays if parsing fails
+            var humidity = [];
+            var temperature = [];
+            var windDirection = [];
+            var windSpeed = [];
+            var rainfall = [];
+            var soilmoisture = [];
+            var soiltemperature = [];
+            var lightintensity = [];
+            var solarradiance = [];
+            var barometricpressure = [];
+            var bmealtitude = [];
+            var locationLat = [];
+            var locationLong = [];
+            var labels = [];
+        }
+        
         // Function to create a line chart
         function createLineChart(ctx, label, data, yAxisLabel, backgroundColor, borderColor) {
+            if (!ctx) {
+                console.error("Canvas context not found for", label);
+                return null;
+            }
+            
             return new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -406,13 +347,18 @@
         }
 
         // Function to create a radar chart
-        function createRadarChart(ctx, data, labels) {
+        function createRadarChart(ctx, data, chartLabels) {
+            if (!ctx) {
+                console.error("Canvas context not found for radar chart");
+                return null;
+            }
+            
             return new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: labels,
+                    labels: chartLabels,
                     datasets: [{
-                        label: 'Wind Data',  // Changed from array to string
+                        label: 'Wind Data',
                         data: data,
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255, 99, 132, 1)',
@@ -420,7 +366,7 @@
                     }]
                 },
                 options: {
-                    maintainAspectRatio: false, // Set maintainAspectRatio to false
+                    maintainAspectRatio: false,
                     scales: {
                         r: {
                             beginAtZero: true
@@ -429,23 +375,6 @@
                 }
             });
         }
-
-        // Your data variables and chart creation code
-        // Fixed JSON parsing for template variables
-        var humidity = JSON.parse('{{ humidity|safe }}');
-        var temperature = JSON.parse('{{ temperature|safe }}');
-        var windDirection = JSON.parse('{{ windDirection|safe }}');
-        var windSpeed = JSON.parse('{{ windSpeed|safe }}');
-        var rainfall = JSON.parse('{{ rainfall|safe }}');
-        var soilmoisture = JSON.parse('{{ soilmoisture|safe }}');
-        var soiltemperature = JSON.parse('{{ soiltemperature|safe }}');
-        var lightintensity = JSON.parse('{{ lightintensity|safe }}');
-        var solarradiance = JSON.parse('{{ solarradiance|safe }}');
-        var barometricpressure = JSON.parse('{{ barometricpressure|safe }}');
-        var bmealtitude = JSON.parse('{{ bmealtitude|safe }}');
-        var locationLat = JSON.parse('{{ locationLat|safe }}');
-        var locationLong = JSON.parse('{{ locationLong|safe }}');
-        var labels = JSON.parse('{{ labels|safe }}');
 
         // AJAX request to fetch data and create charts
         var $myChart = $("#myCharthumidity");
@@ -488,9 +417,10 @@
                     }
                 });
             },
-            error: function () {
-                console.log("error");
+            error: function (error) {
+                console.log("Error fetching data:", error);
             }
         });
     });
 </script>
+{% endblock %}

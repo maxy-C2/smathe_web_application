@@ -1,0 +1,187 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}System Logs | BlitzAgroTech Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logs-table {
+        font-size: 0.85rem;
+    }
+    
+    .activity-type {
+        font-weight: 500;
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+    }
+    
+    .activity-type-login {
+        background-color: #e3f2fd;
+        color: #0d6efd;
+    }
+    
+    .activity-type-logout {
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+    
+    .activity-type-create {
+        background-color: #d1e7dd;
+        color: #198754;
+    }
+    
+    .activity-type-update {
+        background-color: #fff3cd;
+        color: #ffc107;
+    }
+    
+    .activity-type-delete {
+        background-color: #f8d7da;
+        color: #dc3545;
+    }
+    
+    .activity-type-user {
+        background-color: #e2e3e5;
+        color: #212529;
+    }
+    
+    .search-filters {
+        background-color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">System Logs</h1>
+        <a href="{% url 'system_logs' %}?export=true" class="btn btn-outline-primary">
+            <i class="fas fa-download me-2"></i> Export Logs
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="search-filters">
+        <form action="{% url 'system_logs' %}" method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="activity_type" class="form-label">Activity Type</label>
+                <select name="activity_type" id="activity_type" class="form-select">
+                    <option value="">All Activities</option>
+                    {% for type in activity_types %}
+                    <option value="{{ type }}" {% if filters.activity_type == type %}selected{% endif %}>{{ type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="admin" class="form-label">Admin User</label>
+                <select name="admin" id="admin" class="form-select">
+                    <option value="">All Admins</option>
+                    {% for admin in admins %}
+                    <option value="{{ admin.username }}" {% if filters.admin == admin.username %}selected{% endif %}>{{ admin.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="date_from" class="form-label">Date From</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" value="{{ filters.date_from }}">
+            </div>
+            
+            <div class="col-md-3">
+                <label for="date_to" class="form-label">Date To</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" value="{{ filters.date_to }}">
+            </div>
+            
+            <div class="col-12">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'system_logs' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo me-2"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold">Activity Logs</h6>
+            <span class="badge bg-secondary">{{ logs.paginator.count }} entries</span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover logs-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Admin</th>
+                            <th>Activity Type</th>
+                            <th>Description</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log.id }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2" style="width: 30px; height: 30px; border-radius: 50%; background-color: #27ae60; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                        {{ log.admin.username|first|upper }}
+                                    </div>
+                                    {{ log.admin.username }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="activity-type {% if log.activity_type == 'Login' %}activity-type-login{% elif log.activity_type == 'Logout' %}activity-type-logout{% elif log.activity_type == 'Create' %}activity-type-create{% elif log.activity_type == 'Update' %}activity-type-update{% elif log.activity_type == 'Delete' %}activity-type-delete{% elif 'User' in log.activity_type %}activity-type-user{% else %}bg-light{% endif %}">
+                                    {{ log.activity_type }}
+                                </span>
+                            </td>
+                            <td>{{ log.description }}</td>
+                            <td>{{ log.timestamp|date:"M d, Y H:i:s" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <i class="fas fa-history fa-3x mb-3 text-muted"></i>
+                                <p>No activity logs found matching your criteria</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if logs.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if logs.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ logs.previous_page_number }}{% if filters.activity_type %}&activity_type={{ filters.activity_type }}{% endif %}{% if filters.admin %}&admin={{ filters.admin }}{% endif %}{% if filters.date_from %}&date_from={{ filters.date_from }}{% endif %}{% if filters.date_to %}&date_to={{ filters.date_to }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

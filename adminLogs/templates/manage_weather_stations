@@ -1,0 +1,265 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Weather Stations | BlitzAgroTech Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .station-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+    
+    .station-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .station-icon {
+        font-size: 2rem;
+        color: #27ae60;
+        margin-bottom: 1rem;
+    }
+    
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    
+    .status-active {
+        background-color: #27ae60;
+    }
+    
+    .status-inactive {
+        background-color: #e74c3c;
+    }
+    
+    #map {
+        height: 400px;
+        width: 100%;
+        border-radius: 8px;
+    }
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Weather Stations</h1>
+        <a href="#addStationModal" data-bs-toggle="modal" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Add Station
+        </a>
+    </div>
+
+    <!-- Map View -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Station Locations</h6>
+        </div>
+        <div class="card-body">
+            <div id="map" class="mb-3"></div>
+            <div class="small text-muted">
+                <i class="fas fa-info-circle me-1"></i> Map shows the locations of all weather stations. Click on markers for details.
+            </div>
+        </div>
+    </div>
+
+    <!-- Stations Cards -->
+    <div class="row">
+        {% for station in stations %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card station-card shadow h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-cloud-sun-rain station-icon"></i>
+                        <h5 class="card-title">{{ station.station_name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ station.city_name }}</h6>
+                    </div>
+                    
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item px-0">
+                            <strong>Latitude:</strong> {{ station.latitude }}
+                        </li>
+                        <li class="list-group-item px-0">
+                            <strong>Longitude:</strong> {{ station.longitude }}
+                        </li>
+                        {% if station.is_active %}
+                        <li class="list-group-item px-0">
+                            <strong>Status:</strong> <span class="status-indicator status-active"></span> Active
+                        </li>
+                        {% else %}
+                        <li class="list-group-item px-0">
+                            <strong>Status:</strong> <span class="status-indicator status-inactive"></span> Inactive
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'edit_weather_station' station.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        {% if user.is_superuser %}
+                        <a href="{% url 'delete_weather_station' station.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this weather station? This action cannot be undone.')">
+                            <i class="fas fa-trash me-1"></i> Delete
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i> No weather stations found. Click "Add Station" to create one.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Add Station Modal -->
+<div class="modal fade" id="addStationModal" tabindex="-1" aria-labelledby="addStationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStationModalLabel">Add New Weather Station</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'manage_weather_stations' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="station_name" class="form-label">Station Name</label>
+                        <input type="text" class="form-control" id="station_name" name="station_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city_name" class="form-label">City/Location Name</label>
+                        <input type="text" class="form-control" id="city_name" name="city_name" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="latitude" class="form-label">Latitude</label>
+                            <input type="number" step="0.000001" class="form-control" id="latitude" name="latitude" required>
+                        </div>
+                        <div class="col">
+                            <label for="longitude" class="form-label">Longitude</label>
+                            <input type="number" step="0.000001" class="form-control" id="longitude" name="longitude" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                            <label class="form-check-label" for="is_active">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Select Location on Map:</label>
+                        <div id="modalMap" style="height: 250px; width: 100%; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Station</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the main map
+        const map = L.map('map').setView([0, 0], 2);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add markers for each station
+     
+        stations =  {
+            name: station.station_name,
+            city:station.city_name,
+            lat:station.latitude,
+            lng:station.longitude,
+            id:station.id,
+            active:station.is_active,         
+        };
+
+        
+        // Bounds for fitting map
+        let bounds = [];
+        
+        // Add markers to map
+        stations.forEach(function(station) {
+            const marker = L.marker([station.lat, station.lng]).addTo(map);
+            bounds.push([station.lat, station.lng]);
+            
+            marker.bindPopup(`
+                <div style="text-align: center; min-width: 150px;">
+                    <strong>${station.name}</strong><br>
+                    ${station.city}<br>
+                    ${station.active ? '<span style="color: #27ae60;">Active</span>' : '<span style="color: #e74c3c;">Inactive</span>'}<br>
+                    <a href="/adminLogs/weather-stations/edit/${station.id}/" class="btn btn-sm btn-outline-primary mt-2 w-100">View Details</a>
+                </div>
+            `);
+        });
+        
+        // Fit map to markers if we have stations
+        if (bounds.length > 0) {
+            map.fitBounds(bounds);
+        }
+        
+        // Modal map for adding a new station
+        const modalMap = L.map('modalMap').setView([0, 0], 2);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(modalMap);
+        
+        // Initialize marker
+        let modalMarker = null;
+        
+        // Handle click on map to set location
+        modalMap.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            
+            // Update form fields
+            document.getElementById('latitude').value = lat.toFixed(6);
+            document.getElementById('longitude').value = lng.toFixed(6);
+            
+            // Update or create marker
+            if (modalMarker) {
+                modalMarker.setLatLng(e.latlng);
+            } else {
+                modalMarker = L.marker(e.latlng).addTo(modalMap);
+            }
+        });
+        
+        // Reset modal map when modal is shown
+        document.getElementById('addStationModal').addEventListener('shown.bs.modal', function() {
+            setTimeout(function() {
+                modalMap.invalidateSize();
+                
+                // Reset marker if latitude and longitude are empty
+                if (!document.getElementById('latitude').value || !document.getElementById('longitude').value) {
+                    if (modalMarker) {
+                        modalMap.removeLayer(modalMarker);
+                        modalMarker = null;
+                    }
+                }
+            }, 10);
+        });
+    });
+</script>
+{% endblock %}

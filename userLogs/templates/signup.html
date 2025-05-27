@@ -1,0 +1,422 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Smart Weather Station</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2e7d32;
+      --primary-light: #60ad5e;
+      --primary-dark: #005005;
+      --accent-color: #8bc34a;
+      --text-on-light: #333333;
+      --text-on-dark: #ffffff;
+      --error-color: #d32f2f;
+      --success-color: #388e3c;
+      --background-light: #f9f9f9;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', Tahoma, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-on-light);
+      background-color: var(--background-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      max-width: 120px;
+      height: auto;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      font-size: 28px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .form-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px var(--shadow-color);
+      padding: 30px;
+      transition: transform 0.3s ease;
+    }
+    
+    .form-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    fieldset {
+      border: none;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    fieldset:last-of-type {
+      border-bottom: none;
+      margin-bottom: 15px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      color: #555;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 15px;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+      outline: none;
+    }
+    
+    input::placeholder {
+      color: #aaa;
+    }
+    
+    .password-hint {
+      font-size: 12px;
+      color: #777;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .password-strength {
+      height: 5px;
+      margin: 8px 0;
+      border-radius: 3px;
+      background: #eee;
+      overflow: hidden;
+    }
+    
+    .password-strength-meter {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .password-toggle {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+    }
+    
+    .password-toggle input[type="checkbox"] {
+      width: auto;
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
+    }
+    
+    .password-toggle label {
+      display: inline;
+      font-weight: normal;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .terms-container {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 10px;
+    }
+    
+    .terms-container input[type="checkbox"] {
+      width: auto;
+      height: 16px;
+      width: 16px;
+      margin-right: 10px;
+      margin-top: 4px;
+    }
+    
+    .terms-container label {
+      font-size: 14px;
+      font-weight: normal;
+    }
+    
+    .terms-container a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .terms-container a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 25px 0 15px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .alt-action {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .alt-action p {
+      margin-bottom: 10px;
+    }
+    
+    .alt-link {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .alt-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    .messages {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 20px;
+    }
+    
+    .messages div {
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    
+    .success {
+      background-color: rgba(56, 142, 60, 0.1);
+      color: var(--success-color);
+      border-left: 4px solid var(--success-color);
+    }
+    
+    .error {
+      background-color: rgba(211, 47, 47, 0.1);
+      color: var(--error-color);
+      border-left: 4px solid var(--error-color);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .form-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-container">
+      <img src="{% static 'images/logoNonTransparent.jpeg' %}" alt="Smart Weather Station Logo" class="logo">
+    </div>
+    
+    <h1>Create Account</h1>
+    <p>Join the BlitzAgroTech Smart Weather Station network</p>
+    
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="form-card">
+      <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Choose a username" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="Enter your email address" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="pass1">Create Password</label>
+            <div class="password-hint">Must be at least 8 characters with an uppercase, lowercase, number and a special character</div>
+            <div class="password-container">
+              <input id="pass1" name="pass1" type="password" pattern="[A-Za-z0-9@$!%*?&#^()-_+=]{8,}" 
+                    placeholder="Create a strong password" required oninput="checkPasswordStrength()" />
+              <div class="password-strength">
+                <div id="password-strength-meter" class="password-strength-meter"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="pass2">Confirm Password</label>
+            <div class="password-container">
+              <input id="pass2" name="pass2" type="password" pattern="[A-Za-z0-9@$!%*?&#^()-_+=]{8,}" 
+                    placeholder="Confirm your password" required oninput="checkPasswordMatch()" />
+              <div id="password-match-message"></div>
+            </div>
+          </div>
+          
+          <div class="password-toggle">
+            <input type="checkbox" id="show-password" onclick="show_pass()"/>
+            <label for="show-password">Show Password</label>
+          </div>
+        </fieldset>
+        
+        <fieldset>
+          <div class="terms-container">
+            <input id="terms-and-conditions" type="checkbox" required name="terms-and-conditions" />
+            <label for="terms-and-conditions">I accept the <a href="{% url 'terms' %}">terms and conditions</a> and understand my data will be used as described</label>
+          </div>
+        </fieldset>
+        
+        <button type="submit" class="btn">Create Account</button>
+      </form>
+    </div>
+    
+    <div class="alt-action">
+      <p>Already have an account?</p>
+      <a href="{% url 'signin' %}" class="alt-link">Sign in instead</a>
+    </div>
+  </div>
+  
+  <script>
+    function show_pass() {
+      var pass1 = document.getElementById("pass1");
+      var pass2 = document.getElementById("pass2");
+      if (pass1.type === "password") {
+        pass1.type = "text";
+        pass2.type = "text";
+      } else {
+        pass1.type = "password";
+        pass2.type = "password";
+      }
+    }
+    
+    function checkPasswordStrength() {
+      const password = document.getElementById('pass1').value;
+      const meter = document.getElementById('password-strength-meter');
+      
+      // Simple password strength algorithm
+      let strength = 0;
+      
+      // Add strength for length
+      if (password.length >= 8) strength += 25;
+      
+      // Add strength for complexity
+      if (/[A-Z]/.test(password)) strength += 25; // uppercase
+      if (/[a-z]/.test(password)) strength += 25; // lowercase
+      if (/[0-9]/.test(password)) strength += 12.5; // numbers
+      if (/[^A-Za-z0-9]/.test(password)) strength += 12.5; // special chars
+      
+      // Update meter
+      meter.style.width = strength + '%';
+      
+      // Change color based on strength
+      if (strength < 40) {
+        meter.style.backgroundColor = '#f44336'; // weak - red
+      } else if (strength < 70) {
+        meter.style.backgroundColor = '#ff9800'; // medium - orange
+      } else {
+        meter.style.backgroundColor = '#4caf50'; // strong - green
+      }
+    }
+    
+    function checkPasswordMatch() {
+      const pass1 = document.getElementById('pass1').value;
+      const pass2 = document.getElementById('pass2').value;
+      const message = document.getElementById('password-match-message');
+      
+      if (pass2.length === 0) {
+        message.textContent = '';
+        return;
+      }
+      
+      if (pass1 === pass2) {
+        message.textContent = 'Passwords match';
+        message.style.color = '#4caf50';
+      } else {
+        message.textContent = 'Passwords do not match';
+        message.style.color = '#f44336';
+      }
+    }
+  </script>
+</body>
+</html>

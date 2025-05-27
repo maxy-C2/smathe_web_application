@@ -1,0 +1,409 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}System Settings | BlitzAgroTech Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-card {
+        margin-bottom: 20px;
+    }
+    
+    .settings-card .card-header {
+        background-color: #f8f9fa;
+    }
+    
+    .settings-section {
+        padding: 15px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .settings-section:last-child {
+        border-bottom: none;
+    }
+    
+    .settings-section h5 {
+        margin-bottom: 15px;
+    }
+    
+    .custom-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+    }
+    
+    .custom-switch .form-check-input:checked {
+        background-color: #27ae60;
+        border-color: #27ae60;
+    }
+    
+    .info-tooltip {
+        color: #6c757d;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">System Settings</h1>
+        <button type="button" id="saveAllSettings" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i> Save All Changes
+        </button>
+    </div>
+
+    <div class="alert alert-info">
+        <div class="d-flex">
+            <div class="me-3">
+                <i class="fas fa-info-circle fa-2x"></i>
+            </div>
+            <div>
+                <h5 class="alert-heading">Administrator Access Only</h5>
+                <p class="mb-0">These settings affect the entire system. Changes will be logged and applied immediately.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- General Settings -->
+        <div class="col-lg-6">
+            <form id="generalSettingsForm" method="post" action="{% url 'admin_settings' %}">
+                {% csrf_token %}
+                <input type="hidden" name="settings_type" value="general">
+                
+                <div class="card shadow settings-card">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">General Settings</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-section">
+                            <h5>Application</h5>
+                            
+                            <div class="mb-3">
+                                <label for="site_title" class="form-label">Site Title</label>
+                                <input type="text" class="form-control" id="site_title" name="site_title" value="BlitzAgroTech Weather Station">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="site_description" class="form-label">Site Description</label>
+                                <textarea class="form-control" id="site_description" name="site_description" rows="2">Real-time weather monitoring for modern agriculture</textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch custom-switch">
+                                    <input class="form-check-input" type="checkbox" id="maintenance_mode" name="maintenance_mode">
+                                    <label class="form-check-label" for="maintenance_mode">Maintenance Mode</label>
+                                    <i class="fas fa-question-circle ms-1 info-tooltip" data-bs-toggle="tooltip" title="Enabling this will show a maintenance page to regular users"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h5>User Registration</h5>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch custom-switch">
+                                    <input class="form-check-input" type="checkbox" id="allow_registration" name="allow_registration" checked>
+                                    <label class="form-check-label" for="allow_registration">Allow New User Registration</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch custom-switch">
+                                    <input class="form-check-input" type="checkbox" id="require_email_verification" name="require_email_verification" checked>
+                                    <label class="form-check-label" for="require_email_verification">Require Email Verification</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="default_user_role" class="form-label">Default User Role</label>
+                                <select class="form-select" id="default_user_role" name="default_user_role">
+                                    <option value="user" selected>Regular User</option>
+                                    <option value="staff">Staff</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h5>System</h5>
+                            
+                            <div class="mb-3">
+                                <label for="timezone" class="form-label">Default Timezone</label>
+                                <select class="form-select" id="timezone" name="timezone">
+                                    <option value="UTC" selected>UTC</option>
+                                    <option value="Africa/Harare">Africa/Harare</option>
+                                    <option value="Africa/Johannesburg">Africa/Johannesburg</option>
+                                    <option value="America/New_York">America/New_York</option>
+                                    <option value="Europe/London">Europe/London</option>
+                                    <option value="Asia/Tokyo">Asia/Tokyo</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="log_retention" class="form-label">Log Retention Period (days)</label>
+                                <input type="number" class="form-control" id="log_retention" name="log_retention" value="90" min="1" max="365">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Email & Integration Settings -->
+        <div class="col-lg-6">
+            <form id="emailSettingsForm" method="post" action="{% url 'admin_settings' %}">
+                {% csrf_token %}
+                <input type="hidden" name="settings_type" value="email">
+                
+                <div class="card shadow settings-card">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">Email Configuration</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-section">
+                            <h5>Email Server</h5>
+                            
+                            <div class="mb-3">
+                                <label for="email_host" class="form-label">SMTP Server</label>
+                                <input type="text" class="form-control" id="email_host" name="email_host" value="smtp.example.com">
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="email_port" class="form-label">Port</label>
+                                    <input type="number" class="form-control" id="email_port" name="email_port" value="587">
+                                </div>
+                                <div class="col">
+                                    <label for="email_use_tls" class="form-label">Security</label>
+                                    <select class="form-select" id="email_use_tls" name="email_use_tls">
+                                        <option value="tls" selected>TLS</option>
+                                        <option value="ssl">SSL</option>
+                                        <option value="none">None</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email_host_user" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="email_host_user" name="email_host_user" value="notifications@blitzagrotech.com">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email_host_password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="email_host_password" name="email_host_password" value="••••••••••••">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email_from_address" class="form-label">From Address</label>
+                                <input type="email" class="form-control" id="email_from_address" name="email_from_address" value="no-reply@blitzagrotech.com">
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-primary" id="testEmailSettings">
+                                    <i class="fas fa-paper-plane me-2"></i> Test Email Configuration
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            
+            <form id="weatherStationSettingsForm" method="post" action="{% url 'admin_settings' %}">
+                {% csrf_token %}
+                <input type="hidden" name="settings_type" value="weather_station">
+                
+                <div class="card shadow settings-card">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">Weather Station Settings</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-section">
+                            <h5>Data Collection</h5>
+                            
+                            <div class="mb-3">
+                                <label for="data_collection_interval" class="form-label">Data Collection Interval (minutes)</label>
+                                <select class="form-select" id="data_collection_interval" name="data_collection_interval">
+                                    <option value="5">5 minutes</option>
+                                    <option value="15" selected>15 minutes</option>
+                                    <option value="30">30 minutes</option>
+                                    <option value="60">1 hour</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch custom-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable_data_validation" name="enable_data_validation" checked>
+                                    <label class="form-check-label" for="enable_data_validation">Enable Data Validation</label>
+                                    <i class="fas fa-question-circle ms-1 info-tooltip" data-bs-toggle="tooltip" title="Checks incoming data for errors and anomalies"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="data_retention" class="form-label">Data Retention Period (days)</label>
+                                <input type="number" class="form-control" id="data_retention" name="data_retention" value="365" min="1">
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h5>Units</h5>
+                            
+                            <div class="mb-3">
+                                <label for="temperature_unit" class="form-label">Temperature Unit</label>
+                                <select class="form-select" id="temperature_unit" name="temperature_unit">
+                                    <option value="celsius" selected>Celsius (°C)</option>
+                                    <option value="fahrenheit">Fahrenheit (°F)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="speed_unit" class="form-label">Wind Speed Unit</label>
+                                <select class="form-select" id="speed_unit" name="speed_unit">
+                                    <option value="kph" selected>Kilometers per hour (km/h)</option>
+                                    <option value="mph">Miles per hour (mph)</option>
+                                    <option value="ms">Meters per second (m/s)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="pressure_unit" class="form-label">Pressure Unit</label>
+                                <select class="form-select" id="pressure_unit" name="pressure_unit">
+                                    <option value="hpa" selected>Hectopascals (hPa)</option>
+                                    <option value="mbar">Millibars (mbar)</option>
+                                    <option value="mmhg">Millimeters of Mercury (mmHg)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Backup & Restore -->
+    <div class="card shadow settings-card">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Backup & Restore</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Database Backup</h5>
+                    <p>Create a backup of all system data including users, weather stations, and collected data.</p>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="createBackup">
+                            <i class="fas fa-download me-2"></i> Create Backup
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Restore Data</h5>
+                    <p>Restore system data from a previous backup file. This will overwrite current data.</p>
+                    <form action="#" method="post" enctype="multipart/form-data" class="d-grid gap-2">
+                        {% csrf_token %}
+                        <input type="file" class="form-control" id="backupFile" name="backup_file" accept=".zip,.sql,.json">
+                        <button type="button" class="btn btn-warning" id="restoreBackup">
+                            <i class="fas fa-upload me-2"></i> Restore from Backup
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Test Email Modal -->
+<div class="modal fade" id="testEmailModal" tabindex="-1" aria-labelledby="testEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testEmailModalLabel">Test Email Configuration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="test_email_address" class="form-label">Send Test Email To:</label>
+                    <input type="email" class="form-control" id="test_email_address" value="{{ user.email }}">
+                </div>
+                <div id="emailTestResult"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="sendTestEmail">Send Test Email</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Save all settings
+        document.getElementById('saveAllSettings').addEventListener('click', function() {
+            // Submit all forms
+            document.getElementById('generalSettingsForm').submit();
+            document.getElementById('emailSettingsForm').submit();
+            document.getElementById('weatherStationSettingsForm').submit();
+        });
+        
+        // Test email configuration
+        document.getElementById('testEmailSettings').addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('testEmailModal'));
+            modal.show();
+        });
+        
+        // Send test email
+        document.getElementById('sendTestEmail').addEventListener('click', function() {
+            const resultDiv = document.getElementById('emailTestResult');
+            const testEmail = document.getElementById('test_email_address').value;
+            
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        Sending test email to ${testEmail}...
+                    </div>
+                </div>
+            `;
+            
+            // Simulate email sending (in a real app, this would be an AJAX call)
+            setTimeout(function() {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Test email sent successfully to ${testEmail}!
+                    </div>
+                `;
+            }, 2000);
+        });
+        
+        // Backup and restore
+        document.getElementById('createBackup').addEventListener('click', function() {
+            // In a real app, this would trigger a download
+            alert('Backup functionality would be implemented here');
+        });
+        
+        document.getElementById('restoreBackup').addEventListener('click', function() {
+            const fileInput = document.getElementById('backupFile');
+            if (fileInput.files.length === 0) {
+                alert('Please select a backup file first');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to restore from backup? This will overwrite current data.')) {
+                // In a real app, this would submit the form
+                alert('Restore functionality would be implemented here');
+            }
+        });
+    });
+</script>
+{% endblock %}

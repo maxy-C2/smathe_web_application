@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import sys
-from ..userLogs.infor import EMAIL_USE_TLS, EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT
+from userLogs.infor import EMAIL_USE_TLS, EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,7 +35,6 @@ DEBUG = True # change when in production for database
 
 ALLOWED_HOSTS = ['143.244.176.101', '127.0.0.1']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #custom apps
+    'djangoLanding',
     'userLogs',
     'dashboard',
     'adminLogs',
@@ -67,7 +67,14 @@ ROOT_URLCONF = 'smartWeatherProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'userLogs', 'templates'),
+            os.path.join(BASE_DIR, 'adminLogs', 'templates'),
+            os.path.join(BASE_DIR, 'dashboard', 'templates'),
+            os.path.join(BASE_DIR, 'djangoLanding', 'templates'),
+            
+            ],
+        
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,15 +160,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'dashboard', 'static'),
     os.path.join(BASE_DIR, 'userLogs', 'static'),
+    os.path.join(BASE_DIR, 'djangoLanding', 'static'),
 ]
 
-MEDIA_URL = '/media/'
-MEDIAFILES_DIRS = [
-    os.path.join(BASE_DIR, 'dashboard', 'media'),
-    os.path.join(BASE_DIR, 'userLogs', 'media'),
-]
 
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
 # Default primary key field type
@@ -177,3 +180,9 @@ EMAIL_HOST = EMAIL_HOST
 EMAIL_HOST_USER = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 EMAIL_PORT = EMAIL_PORT
+
+
+# project/settings.py
+LOGIN_URL = 'signin'  # Default URL for login_required decorator
+LOGIN_REDIRECT_URL = 'user_menu'  # Where to go after successful login if no next parameter
+LOGOUT_REDIRECT_URL = 'signin'  # Where to go after logout

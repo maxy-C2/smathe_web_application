@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import weatherData, weatherStation, search
 
-# Register your models here.
+admin.site.register(weatherData)
+admin.site.register(weatherStation)
+admin.site.register(search)

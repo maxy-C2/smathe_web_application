@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1">
+		
+		<title>{% block title %}BlitzAgroTech{% endblock %}</title>
+
+		{% block extra_css %}
+		<!-- Loading third party fonts -->
+		<link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css">
+		<link href="{% static 'fonts/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+		<!-- Loading main css file -->
+		<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+		
+		{% endblock %}
+		
+		
+		<!--[if lt IE 9]>
+		<script src="{% static 'js/ie-support/html5.js' %}"></script>
+		<script src="{% static 'js/ie-support/respond.js' %}"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<header>
+			<div class="site-content">
+				{% if user.is_authenticated %}
+				<div class="site-header">
+					<div class="container">
+						<a href="{% url 'user_menu' %}" class="branding">
+							<img src="{% static 'images/first_logo.png' %}" alt="" class="logo" style="height: 50px; width: 50px;">
+							<div class="logo-type">
+								<h1 class="site-title">BlitzAgroTech</h1>
+								<small class="site-description">Cultivating Through Innovation</small>
+							</div>
+						</a>
+
+						<!-- Default snippet for navigation -->
+						<div class="main-navigation">
+							<button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+							<ul class="menu">
+								<li class="menu-item {% if request.resolver_match.url_name == 'user_menu' %}current-menu-item{% endif %}">
+									<a href="{% url 'user_menu' %}">Dashboard</a>
+								</li>
+								<li class="menu-item {% if request.resolver_match.url_name == 'weather_updates' %}current-menu-item{% endif %}">
+									<a href="{% url 'weather_updates' %}">Weather Updates</a>
+								</li>
+								<li class="menu-item {% if request.resolver_match.url_name == 'stations_interface' %}current-menu-item{% endif %}">
+									<a href="{% url 'stations_interface' %}">Weather Stations</a>
+								</li>
+								<li class="menu-item {% if request.resolver_match.url_name == 'contact' %}current-menu-item{% endif %}">
+									<a href="{% url 'contact' %}">Contact</a>
+								</li>
+								<li class="menu-item">
+									<a href="{% url 'signout' %}">Signout</a>
+								</li>
+							</ul> 
+						</div> 
+
+						<div class="mobile-navigation"></div>
+					</div>
+				</div> 
+				{% endif %}
+			</div>
+
+		</header>
+	
+		<main class="main-content">
+			{% if messages %}
+			<div class="messages container">
+				{% for message in messages %}
+				<div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+
+			{% block content %}
+			
+			
+			{% endblock %}
+		</main> 
+
+		<footer class="site-footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<form action="#" class="subscribe-form">
+							<input type="text" placeholder="Enter your email to subscribe...">
+							<input type="submit" value="Subscribe">
+						</form>
+					</div>
+					<div class="col-md-3 col-md-offset-1">
+						<div class="social-links">
+							<a href="#"><i class="fa fa-linkedin"></i></a>
+							<a href="#"><i class="fa fa-facebook"></i></a>
+							<a href="#"><i class="fa fa-instagram"></i></a>
+						</div>
+					</div>
+				</div>
+
+				<p class="colophon">Copyright @ {% now 'Y' %} BlitzAgroTech. All rights reserved</p>
+			</div>
+		</footer> 
+		
+
+		{% block scripts %}
+		<script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+		<script src="{% static 'js/plugins.js' %}"></script>
+		<script src="{% static 'js/app.js' %}"></script>
+		{% endblock %}
+	</body>
+</html>

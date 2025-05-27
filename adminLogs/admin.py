@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.admin.models import LogEntry
 from .models import AdminActivity
-from dashboard.models import WeatherStation  
+from dashboard.models import weatherStation  
 
 
 
@@ -17,10 +17,10 @@ class BlitzAgroTechAdminSite(admin.AdminSite):
     index_title = "Welcome to BlitzAgroTech Admin"
     
     # Customize default login template
-    login_template = 'admin/custom_login.html'
+    login_template = 'custom_login.html'
     
     # Optional: Custom index dashboard
-    index_template = 'admin/custom_index.html'
+    index_template = 'custom_index.html'
 
 # Create an instance of our custom admin site
 admin_site = BlitzAgroTechAdminSite(name='blitzadmin')
@@ -91,8 +91,8 @@ admin_site.register(LogEntry)  # Optionally register Django's built-in LogEntry 
 # Step 5: Register other models here as needed
 # admin_site.register(WeatherStation, WeatherStationAdmin)
 class WeatherStationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'is_active')
+    list_display = ('station_name', 'city_name', 'latitude', 'longitude')
     list_filter = ('is_active',)
-    search_fields = ('name', 'location')
+    search_fields = ('station_name', 'city_name', 'id')
     
-admin_site.register(WeatherStation, WeatherStationAdmin)
+admin_site.register(weatherStation, WeatherStationAdmin)
